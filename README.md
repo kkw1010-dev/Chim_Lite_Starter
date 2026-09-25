@@ -148,8 +148,11 @@ ESL 플래그가 붙은 ESP이다. FormID는 모두 0x800~0xFFF 범위이다. �
    - 처음 목록 9개는 청취 확인 결과 모두 여성이었다. `TS_Miraak`(256Hz)과 `TS_Gelebor`(208Hz)는 성별을 바꾼 버전으로 보이고, `Valerica`(134Hz)는 낮은 여성 음성이다. 그래서 한동안 남성 NPC는 텍스트로만 대답했다.
    - 이후 **남성 음성 `MaleNord`(127Hz), `MaleYoungEager`(122Hz), `Miraak`(116Hz)**과 `FemaleNord`(193Hz)가 추가되었다. 남성 VoiceType은 성격에 따라 세 음성에 나눠 연결하고, 기본 남성 음성은 `MaleNord`이다.
      - `MaleNord`: nord, 지휘관, 병사, 경비병, 산적, 술주정뱅이, 오크, 노인, 평범한 목소리 등
-     - `MaleYoungEager`: 젊은 목소리, 아이, 겁쟁이
+     - `MaleYoungEager`: 젊은 목소리, 겁쟁이. 청취 결과 20~30대 남성이며 아이 목소리는 아니다. 미카엘, 스벤, 존 배틀본에 어울린다.
      - `Miraak`: 거만함, 엘프, 다크엘프, 흑마법사, 교활함
+   - 여성 노드는 `FemaleNord`를 쓴다. `Frea`는 목소리 타입 이름에 `frea`가 들어간 NPC(프레아 본인)에게만 쓴다.
+   - **아이**(`malechild`, `femalechild`)는 맞는 음성이 없으므로 `map` 값을 `null`로 두어 텍스트만 나온다.
+   - **NPC별 지정**: `provider_voices.json`의 `npcs`에 참조 ID(`refid`)별로 음성을 지정할 수 있다. 예: 존 배틀본(`0001A68A`)은 게임 목소리 타입이 MaleNord이지만, 청취 결과에 따라 `MaleYoungEager`로 지정했다.
    - 여성 VoiceType은 성격에 맞춰 연결한다. 예: `femalecommander → FemaleCommander`, `femalenord → Frea`, `femalesultry → FemaleYoungEager`. 나머지는 `FemaleEvenToned`이다.
 3. **음성이 추가되면**: `provider_voices.json`의 `voices`와 `genders`에 넣고 `map`에 연결한다. 플러그인은 이 파일이 바뀌면 바로 다시 읽는다. 게임 중이어도 MO2를 재시작할 필요가 없다. 플러그인이 넣었던 값과 빈 값은 새 매핑으로 다시 계산되고, 사용자가 직접 넣은 값은 그대로 둔다.
 

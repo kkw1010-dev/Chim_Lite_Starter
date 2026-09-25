@@ -11,6 +11,8 @@ in text only ("NPC profile has blank voice ID"). This module picks one:
 2. The provider voice for that voice type, from provider_voices.json. A voice
    whose declared gender differs from the NPC's is replaced by that gender's
    default; when the gender has no default (null), the result is "" = text only.
+   A voice type mapped to null (e.g. children, for whom no fitting voice exists)
+   is text only. "npcs" overrides the result for one reference ID.
 """
 
 import json
@@ -33,7 +35,8 @@ class VoiceChooser:
     def _validate(self):
         p = self.provider
         names = set(p["voices"])
-        used = [*p["map"].values(), *p["keywords"].values(), *p["default"].values()]
+        used = [*p["map"].values(), *p["keywords"].values(), *p["default"].values(),
+                *(n["voice"] for n in p.get("npcs", {}).values())]
         bad = sorted({v for v in used if v and v not in names})
         if bad:
             raise ValueError(f"provider_voices.json maps to unlisted voices: {bad}")
@@ -71,8 +74,15 @@ class VoiceChooser:
         p = self.provider
         voice_type, why = self.voice_type_of(profile)
         gender = self.gender_of(profile)
+        override = p.get("npcs", {}).get((profile.get("refid") or "").upper())
+        if override:
+            return override["voice"] or "", f"{voice_type}; per-NPC choice ({override.get('note', '')})"
         voice = next((v for k, v in p["keywords"].items() if k in voice_type), None)
-        voice = voice or p["map"].get(voice_type) or p["default"][gender] or ""
+        if voice is None and voice_type in p["map"]:
+            voice = p["map"][voice_type]
+            if not voice:
+                return "", f"{voice_type}; {why}; mapped to text only"
+        voice = voice or p["default"][gender] or ""
         if voice and p["genders"].get(voice) != gender:
             voice = p["default"][gender] or ""
         if not voice:

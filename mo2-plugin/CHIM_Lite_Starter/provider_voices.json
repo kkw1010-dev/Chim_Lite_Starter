@@ -1,5 +1,5 @@
 {
-  "_comment": "SeranaCHANnel TTS voices as listed on the logged-in endpoint page. 2026-09-25: nine voices, all female by a listening test (including TS_Miraak, TS_Gelebor and Valerica). Later on 2026-09-25 the service added MaleNord, MaleYoungEager, Miraak and FemaleNord; their test sentences measured 127, 122, 116 and 193 Hz. Male voice types map onto the three male voices; default.male is MaleNord. Ashe is listed but not used by default.",
+  "_comment": "SeranaCHANnel TTS voices as listed on the logged-in endpoint page. 2026-09-25: nine voices, all female by a listening test (including TS_Miraak, TS_Gelebor and Valerica). Later on 2026-09-25 the service added MaleNord, MaleYoungEager, Miraak and FemaleNord; their test sentences measured 127, 122, 116 and 193 Hz. Male voice types map onto the three male voices; default.male is MaleNord. Ashe is listed but not used by default. User listening check (2026-09-25): FemaleNord, MaleNord and Miraak fit; MaleYoungEager is a 20-30s man, not a child, and suits Mikael, Sven and Jon Battle-Born. So child voice types are text only (no child voice is offered) and Jon Battle-Born gets MaleYoungEager by a per-NPC entry, as the user chose.",
   "voices": [
     "Ashe",
     "FemaleCommander",
@@ -38,7 +38,7 @@
     "femalesoldier": "FemaleCommander",
     "femaleyoungeager": "FemaleYoungEager",
     "femalesultry": "FemaleYoungEager",
-    "femalechild": "FemaleYoungEager",
+    "femalechild": null,
     "femalenord": "FemaleNord",
     "malenord": "MaleNord",
     "malenordcommander": "MaleNord",
@@ -59,7 +59,7 @@
     "maleargonian": "MaleNord",
     "malekhajiit": "MaleNord",
     "maleyoungeager": "MaleYoungEager",
-    "malechild": "MaleYoungEager",
+    "malechild": null,
     "malecoward": "MaleYoungEager",
     "malecondescending": "Miraak",
     "maleelfhaughty": "Miraak",
@@ -85,5 +85,11 @@
     "MaleYoungEager": "male",
     "Miraak": "male",
     "FemaleNord": "female"
+  },
+  "npcs": {
+    "0001A68A": {
+      "voice": "MaleYoungEager",
+      "note": "Jon Battle-Born; user's choice (his game voice type is MaleNord)"
+    }
   }
 }
