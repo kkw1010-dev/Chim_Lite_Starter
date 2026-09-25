@@ -70,10 +70,11 @@ ESL 플래그가 붙은 ESP이다. FormID는 모두 0x800~0xFFF 범위이다. �
 | --- | --- | --- | --- |
 | 800 | QUST | `TKLChimChatQuest` | 플래그 `0x011`(StartGameEnabled + 바닐라 대화 퀘스트가 모두 가진 0x010 비트), Priority 50, Type None. 스크립트 `TKLChimChatController`. Alias 0 = 플레이어(ForcedRef 000014), 별칭 스크립트 `TKLChimChatPlayerAlias` |
 | 801 | FACT | `TKLChimChatTempAgentFaction` | 이 모드가 임시로 에이전트로 만든 NPC 표시용 |
-| 810/811/812 | DIAL/DLBR/INFO | `TKLChimChatTalk*` | 플레이어 선택지 `[AI] 이야기 좀 하자.` → NPC `무슨 이야기지?`. 조건: Subject `HasKeyword ActorTypeNPC(013794) == 1`. Goodbye 플래그. End 프래그먼트 `TKLChimChatTalkFragment` |
-| 820/821/822 | DIAL/DLBR/INFO | `TKLChimChatEnd*` | 플레이어 선택지 `[AI] 이야기는 여기까지 하지.` → NPC `그러지.`. 조건: `GetInFaction TKLChimChatTempAgentFaction == 1`. Goodbye. End 프래그먼트 `TKLChimChatEndFragment` |
+| 810/811/812 | DIAL/DLBR/INFO | `TKLChimChatTalk*` | 플레이어 선택지 `[AI] 이야기 좀 하자.` → NPC 대답은 바닐라 공용 대사 **"Of course."**(Shared Info → `0DBA22:Skyrim.esm`). 조건: Subject `HasKeyword ActorTypeNPC(013794) == 1`. Goodbye 플래그. End 프래그먼트 `TKLChimChatTalkFragment` |
+| 820/821/822 | DIAL/DLBR/INFO | `TKLChimChatEnd*` | 플레이어 선택지 `[AI] 이야기는 여기까지 하지.` → NPC 대답은 바닐라 공용 대사 **"I understand."**(Shared Info → `0DBA21:Skyrim.esm`). 조건: `GetInFaction TKLChimChatTempAgentFaction == 1`. Goodbye. End 프래그먼트 `TKLChimChatEndFragment` |
 
 - DLBR은 **Top-Level, Category Player**이다. DIAL은 Category Topic, Subtype Custom(`CUST`)이다. 최상위 브랜치에 속하지 않은 플레이어 토픽은 대화 메뉴에 나오지 않는다.
+- **NPC 대답 음성**: 두 INFO는 자체 대사 없이 **Shared Info(`DNAM`, Response Data)**로 바닐라 `DialogueGenericSharedInfo`의 `OfCourse`(0DBA22)와 `Understand`(0DBA21)를 가리킨다. 그래서 NPC는 **자기 목소리 타입으로** 바닐라 음성을 말하고, 자막은 게임 언어의 바닐라 번역이 나온다. 음성 파일은 게임 BSA(`Skyrim - Voices_en0.bsa`)에 있는 것을 쓰고, 이 모드에는 **음성 파일을 하나도 넣지 않는다**. 두 대사는 조건이 없고, 사람 NPC의 일반 목소리 타입 42개(남녀 전부)에 녹음되어 있다. `Skyrim - Voices_en0.bsa`에서 직접 세었다. 녹음이 없는 고유 목소리(울프릭 등)는 자막만 나온다. TTS 남성 음성이 없는 동안에도, 남성 NPC는 이 두 마디만큼은 원래 목소리로 말한다.
 - `SEQ/CHIM Lite - Dialogue Chat.seq`(`02000800`)가 반드시 있어야 한다. 대화를 가진 StartGameEnabled 퀘스트는 SEQ에 없으면 새 게임에서 잠든 상태로 남고, 선택지가 **아예 나오지 않는다**. 값은 `(마스터 수 << 24) | 로컬ID`이다.
 - 한국어 문자열은 UTF-8이다(Mutagen `EncodingBundle(_utf8, _utf8)`).
 - CK 호환 하위 레코드: INFO CNAM(FavorLevel None), 별칭 FNAM(0)과 VTCK(null 링크). 없으면 CK 대화 편집기가 튕긴다. 게임은 괜찮다.
@@ -190,4 +191,4 @@ python tools/voice-table/build_voice_table.py <내보낸 폴더> mo2-plugin/CHIM
 - SeranaCHANnel에 남성 음성이 없는 동안 남성 NPC는 텍스트만 나온다.
 - NPC가 처음 등록된 직후의 첫 대답은, Voice ID가 채워지기 전(최대 약 3초)이면 무음일 수 있다.
 - SeranaCHANnel 세션은 API 호출이 30분 동안 없으면 끊긴다. 게임 전에 로그인해야 한다.
-- 대사 문구와 선택지 문구는 개발자가 정한 것이다. 바꾸려면 `Generator/Program.cs`의 `AddTopic` 인자를 고치면 된다.
+- 선택지 문구는 개발자가 정한 것이다. NPC 대답은 바닐라 공용 대사("Of course." / "I understand.")다. 바꾸려면 `Generator/Program.cs`의 `AddTopic` 인자(프롬프트, Shared Info FormID)를 고치면 된다.

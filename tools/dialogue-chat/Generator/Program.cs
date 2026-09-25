@@ -27,6 +27,10 @@ FormKey Chim(uint id) => new(new ModKey("AIAgent", ModType.Plugin), id);
 var chimControlQuest = Chim(0x0093FC); // AIAgentPapyrusFunctions quest: AIAgentFunctions + AIAgentPapyrusFunctions
 var playerRef = Vanilla(0x000014);
 var actorTypeNpc = Vanilla(0x013794);  // ActorTypeNPC keyword
+// DialogueGenericSharedInfo lines, voiced for all 42 generic humanoid voice types
+// (counted in Skyrim - Voices_en0.bsa on 2026-09-25); no conditions of their own.
+var ofCourse = Vanilla(0x0DBA22);    // "Of course."
+var understand = Vanilla(0x0DBA21);  // "I understand."
 
 // Light-plugin ids live in 0x800..0xFFF.
 const uint IdQuest = 0x800, IdFaction = 0x801;
@@ -88,7 +92,7 @@ adapter.Aliases.Add(new QuestFragmentAlias
 });
 quest.VirtualMachineAdapter = adapter;
 
-void AddTopic(string id, uint topicId, uint branchId, uint infoId, string prompt, string response,
+void AddTopic(string id, uint topicId, uint branchId, uint infoId, string prompt, FormKey sharedInfo,
               string fragment, IEnumerable<Condition> conditions)
 {
     var topic = new DialogTopic(Id(topicId), SkyrimRelease.SkyrimSE)
@@ -123,7 +127,10 @@ void AddTopic(string id, uint topicId, uint branchId, uint infoId, string prompt
         // CNAM: every CK-authored INFO has it; without it the CK crashes opening the topic.
         FavorLevel = FavorLevel.None,
     };
-    info.Responses.Add(new DialogResponse { Text = response, ResponseNumber = 1, Emotion = Emotion.Neutral });
+    // Shared Info (DNAM): the NPC speaks a vanilla generic line, in its own voice type,
+    // with the vanilla (localized) subtitle. Voice files stay in the game's own BSA;
+    // nothing is copied into this mod. The INFO carries no responses of its own.
+    info.ResponseData.SetTo(sharedInfo);
     info.Conditions.AddRange(conditions);
 
     var entry = new ScriptEntry { Name = fragment, Flags = ScriptEntry.Flag.Local };
@@ -159,11 +166,11 @@ Condition InFaction(FormKey faction)
 }
 
 AddTopic("TKLChimChatTalk", IdTalkTopic, IdTalkBranch, IdTalkInfo,
-         "[AI] 이야기 좀 하자.", "무슨 이야기지?",
+         "[AI] 이야기 좀 하자.", ofCourse,
          "TKLChimChatTalkFragment", new[] { HasKeyword(actorTypeNpc) });
 
 AddTopic("TKLChimChatEnd", IdEndTopic, IdEndBranch, IdEndInfo,
-         "[AI] 이야기는 여기까지 하지.", "그러지.",
+         "[AI] 이야기는 여기까지 하지.", understand,
          "TKLChimChatEndFragment", new[] { InFaction(tempFaction.FormKey) });
 
 // Korean text must be UTF-8: Mutagen's default Windows-1252 turns Hangul into '?'.
@@ -206,7 +213,9 @@ foreach (var t in check.DialogTopics)
     Expect(r.Flags?.Flags.HasFlag(DialogResponses.Flag.Goodbye) == true, $"{t.EditorID}: not a goodbye line");
     Expect(r.VirtualMachineAdapter?.ScriptFragments?.OnEnd?.ScriptName is { } n && n.EndsWith("Fragment"), $"{t.EditorID}: end fragment missing");
     Expect(r.Conditions.Count == 1, $"{t.EditorID}: expected one condition, found {r.Conditions.Count}");
-    Console.WriteLine($"  {t.EditorID}: \"{r.Prompt?.String}\" -> \"{r.Responses[0].Text.String}\"");
+    Expect(r.Responses.Count == 0 && r.ResponseData.FormKeyNullable is { } shared && shared.ModKey.FileName == "Skyrim.esm",
+           $"{t.EditorID}: expected a Skyrim.esm shared info and no own responses");
+    Console.WriteLine($"  {t.EditorID}: \"{r.Prompt?.String}\" -> shared info {r.ResponseData.FormKeyNullable}");
 }
 uint fileIndex = (uint)masters.Count;
 var seqBytes = check.Quests.Where(x => x.Flags.HasFlag(Quest.Flag.StartGameEnabled))
