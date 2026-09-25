@@ -1,0 +1,54 @@
+{
+  "_comment": "SeranaCHANnel TTS voices as listed on the logged-in endpoint page (2026-09-25), with the default mapping from Skyrim voice types. A listening test found every listed voice female, including TS_Miraak, TS_Gelebor and Valerica, so default.male is null: male NPCs stay text-only. When a male voice is added, list it in voices, mark it male in genders and set default.male (or map male voice types to it). Ashe is listed but not used by default.",
+  "voices": [
+    "Ashe",
+    "FemaleCommander",
+    "FemaleEvenToned",
+    "FemaleYoungEager",
+    "Frea",
+    "Serana",
+    "TS_Gelebor",
+    "TS_Miraak",
+    "Valerica"
+  ],
+  "keywords": {
+    "serana": "Serana",
+    "valerica": "Valerica",
+    "frea": "Frea"
+  },
+  "map": {
+    "femaleeventoned": "FemaleEvenToned",
+    "femalecommoner": "FemaleEvenToned",
+    "femaleoldkindly": "FemaleEvenToned",
+    "femaleoldgrumpy": "FemaleEvenToned",
+    "femalecoward": "FemaleEvenToned",
+    "femaleshrill": "FemaleEvenToned",
+    "femaledarkelf": "FemaleEvenToned",
+    "femaleargonian": "FemaleEvenToned",
+    "femalekhajiit": "FemaleEvenToned",
+    "femalecommander": "FemaleCommander",
+    "femalecondescending": "FemaleCommander",
+    "femaleelfhaughty": "FemaleCommander",
+    "femaleorc": "FemaleCommander",
+    "femalesoldier": "FemaleCommander",
+    "femaleyoungeager": "FemaleYoungEager",
+    "femalesultry": "FemaleYoungEager",
+    "femalechild": "FemaleYoungEager",
+    "femalenord": "Frea"
+  },
+  "default": {
+    "female": "FemaleEvenToned",
+    "male": null
+  },
+  "genders": {
+    "Ashe": "female",
+    "FemaleCommander": "female",
+    "FemaleEvenToned": "female",
+    "FemaleYoungEager": "female",
+    "Frea": "female",
+    "Serana": "female",
+    "TS_Gelebor": "female",
+    "TS_Miraak": "female",
+    "Valerica": "female"
+  }
+}
