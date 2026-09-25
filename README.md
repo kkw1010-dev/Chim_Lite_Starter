@@ -144,10 +144,14 @@ ESL 플래그가 붙은 ESP이다. FormID는 모두 0x800~0xFFF 범위이다. �
    - 표에 없는 참조(모드 NPC, 스크립트로 생성된 NPC)는 프로필의 종족과 성별로 고른 기본 VoiceType을 쓴다. 종족 이름은 한국어와 영어 표시명, `NordRace_CF` 같은 EditorID를 모두 인식한다.
 2. **제공 음성으로 변환** (`provider_voices.json`)
    - SeranaCHANnel TTS는 ElevenLabs 매핑이다. 목록에 없는 이름은 `HTTP 422 unknown_speaker`로 거부된다. Skyrim VoiceType 이름(`malenord`, `femalenord` 등)도 그대로는 거부된다.
-   - 2026-09-25 기준 제공 음성: `Ashe, FemaleCommander, FemaleEvenToned, FemaleYoungEager, Frea, Serana, TS_Gelebor, TS_Miraak, Valerica`.
-   - **청취 확인 결과 9개 모두 여성 음성**이다. `TS_Miraak`(256Hz), `TS_Gelebor`(208Hz)는 성별을 바꾼 버전으로 보이고, `Valerica`(134Hz)는 낮은 여성 음성이다. 그래서 `default.male = null`로 두어 **남성 NPC는 Voice ID를 비운다(텍스트만)**. 여성 음성으로 남성 NPC를 말하게 하지 않으려는 선택이다.
+   - 제공 음성(2026-09-25): `Ashe, FemaleCommander, FemaleEvenToned, FemaleNord, FemaleYoungEager, Frea, MaleNord, MaleYoungEager, Miraak, Serana, TS_Gelebor, TS_Miraak, Valerica`.
+   - 처음 목록 9개는 청취 확인 결과 모두 여성이었다. `TS_Miraak`(256Hz)과 `TS_Gelebor`(208Hz)는 성별을 바꾼 버전으로 보이고, `Valerica`(134Hz)는 낮은 여성 음성이다. 그래서 한동안 남성 NPC는 텍스트로만 대답했다.
+   - 이후 **남성 음성 `MaleNord`(127Hz), `MaleYoungEager`(122Hz), `Miraak`(116Hz)**과 `FemaleNord`(193Hz)가 추가되었다. 남성 VoiceType은 성격에 따라 세 음성에 나눠 연결하고, 기본 남성 음성은 `MaleNord`이다.
+     - `MaleNord`: nord, 지휘관, 병사, 경비병, 산적, 술주정뱅이, 오크, 노인, 평범한 목소리 등
+     - `MaleYoungEager`: 젊은 목소리, 아이, 겁쟁이
+     - `Miraak`: 거만함, 엘프, 다크엘프, 흑마법사, 교활함
    - 여성 VoiceType은 성격에 맞춰 연결한다. 예: `femalecommander → FemaleCommander`, `femalenord → Frea`, `femalesultry → FemaleYoungEager`. 나머지는 `FemaleEvenToned`이다.
-3. **남성 음성이 추가되면**: `provider_voices.json`의 `voices`에 이름을 넣고, `genders`에 `"male"`, `default.male`에 그 이름을 넣은 뒤 MO2를 재시작한다. 이전에 비워 둔 남성 NPC도 자동으로 채워진다.
+3. **음성이 추가되면**: `provider_voices.json`의 `voices`와 `genders`에 넣고 `map`에 연결한다. 플러그인은 이 파일이 바뀌면 바로 다시 읽는다. 게임 중이어도 MO2를 재시작할 필요가 없다. 플러그인이 넣었던 값과 빈 값은 새 매핑으로 다시 계산되고, 사용자가 직접 넣은 값은 그대로 둔다.
 
 ### 4-3. 검증 결과 (2026-09-25, 개발자 환경)
 
@@ -197,7 +201,6 @@ python tools/voice-table/build_voice_table.py <내보낸 폴더> mo2-plugin/CHIM
 
 ## 6. 알려진 한계
 
-- SeranaCHANnel에 남성 음성이 없는 동안 남성 NPC는 텍스트만 나온다.
 - NPC가 처음 등록된 직후의 첫 대답은, Voice ID가 채워지기 전(최대 약 3초)이면 무음일 수 있다.
 - SeranaCHANnel 세션은 API 호출이 30분 동안 없으면 끊긴다. 게임 전에 로그인해야 한다.
 - 선택지 문구는 개발자가 정한 것이다. NPC 대답은 바닐라 공용 대사("Of course." / "I understand.")다. 바꾸려면 `Generator/Program.cs`의 `AddTopic` 인자(프롬프트, Shared Info FormID)를 고치면 된다.

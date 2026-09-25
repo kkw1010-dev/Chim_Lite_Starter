@@ -1,11 +1,15 @@
 {
-  "_comment": "SeranaCHANnel TTS voices as listed on the logged-in endpoint page (2026-09-25), with the default mapping from Skyrim voice types. A listening test found every listed voice female, including TS_Miraak, TS_Gelebor and Valerica, so default.male is null: male NPCs stay text-only. When a male voice is added, list it in voices, mark it male in genders and set default.male (or map male voice types to it). Ashe is listed but not used by default.",
+  "_comment": "SeranaCHANnel TTS voices as listed on the logged-in endpoint page. 2026-09-25: nine voices, all female by a listening test (including TS_Miraak, TS_Gelebor and Valerica). Later on 2026-09-25 the service added MaleNord, MaleYoungEager, Miraak and FemaleNord; their test sentences measured 127, 122, 116 and 193 Hz. Male voice types map onto the three male voices; default.male is MaleNord. Ashe is listed but not used by default.",
   "voices": [
     "Ashe",
     "FemaleCommander",
     "FemaleEvenToned",
+    "FemaleNord",
     "FemaleYoungEager",
     "Frea",
+    "MaleNord",
+    "MaleYoungEager",
+    "Miraak",
     "Serana",
     "TS_Gelebor",
     "TS_Miraak",
@@ -14,7 +18,8 @@
   "keywords": {
     "serana": "Serana",
     "valerica": "Valerica",
-    "frea": "Frea"
+    "frea": "Frea",
+    "miraak": "Miraak"
   },
   "map": {
     "femaleeventoned": "FemaleEvenToned",
@@ -34,11 +39,37 @@
     "femaleyoungeager": "FemaleYoungEager",
     "femalesultry": "FemaleYoungEager",
     "femalechild": "FemaleYoungEager",
-    "femalenord": "Frea"
+    "femalenord": "FemaleNord",
+    "malenord": "MaleNord",
+    "malenordcommander": "MaleNord",
+    "malecommander": "MaleNord",
+    "malesoldier": "MaleNord",
+    "maleguard": "MaleNord",
+    "malebrute": "MaleNord",
+    "malebandit": "MaleNord",
+    "maleforsworn": "MaleNord",
+    "maledrunk": "MaleNord",
+    "maleorc": "MaleNord",
+    "maleoldgrumpy": "MaleNord",
+    "maleoldkindly": "MaleNord",
+    "maleeventoned": "MaleNord",
+    "maleeventonedaccented": "MaleNord",
+    "malecommoner": "MaleNord",
+    "malecommoneraccented": "MaleNord",
+    "maleargonian": "MaleNord",
+    "malekhajiit": "MaleNord",
+    "maleyoungeager": "MaleYoungEager",
+    "malechild": "MaleYoungEager",
+    "malecoward": "MaleYoungEager",
+    "malecondescending": "Miraak",
+    "maleelfhaughty": "Miraak",
+    "maledarkelf": "Miraak",
+    "malewarlock": "Miraak",
+    "maleslycynical": "Miraak"
   },
   "default": {
     "female": "FemaleEvenToned",
-    "male": null
+    "male": "MaleNord"
   },
   "genders": {
     "Ashe": "female",
@@ -49,6 +80,10 @@
     "Serana": "female",
     "TS_Gelebor": "female",
     "TS_Miraak": "female",
-    "Valerica": "female"
+    "Valerica": "female",
+    "MaleNord": "male",
+    "MaleYoungEager": "male",
+    "Miraak": "male",
+    "FemaleNord": "female"
   }
 }

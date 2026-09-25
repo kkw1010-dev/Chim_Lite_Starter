@@ -25,7 +25,7 @@ from typing import List
 
 import mobase
 
-from .voice import VoiceChooser
+from .voice import HERE as VOICE_DIR, VoiceChooser
 
 NAME = "CHIM Lite Starter"
 TRIGGERS = {"skse64_loader.exe", "skyrimse.exe"}
@@ -189,8 +189,12 @@ class Starter(mobase.IPlugin):
             assigned = json.loads(self._assigned_path().read_text(encoding="utf-8"))
         except (OSError, ValueError):
             assigned = {}
+        stamps = self._data_stamps()
         while not self._stop.is_set():
             try:
+                if self._data_stamps() != stamps:  # provider_voices.json / voice_table.json edited
+                    chooser, stamps = VoiceChooser(), self._data_stamps()
+                    self._log("reloaded voice data")
                 for prof in self._profiles():
                     name, current = prof["npc_name"], (prof.get("voiceid") or "").strip()
                     if current and current != assigned.get(name):
@@ -210,6 +214,10 @@ class Starter(mobase.IPlugin):
             except Exception as e:
                 self._log(f"FAIL voice loop {type(e).__name__}: {e}", once_key=("fail", str(e)))
                 self._stop.wait(IDLE_SECONDS)
+
+    @staticmethod
+    def _data_stamps():
+        return tuple((VOICE_DIR / n).stat().st_mtime for n in ("provider_voices.json", "voice_table.json"))
 
     def _write_voice(self, name, expected, voice):
         path = f"npc/{urllib.parse.quote(name, safe='')}/biography"
