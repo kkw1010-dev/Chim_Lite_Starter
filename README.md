@@ -5,6 +5,7 @@ CHIM Lite 2.3.3 + SeranaCHANnel 환경에서 쓰는 비공식 확장 두 가지.
 | 구성 | 하는 일 |
 | --- | --- |
 | **CHIM Lite - Dialogue Chat** (ESL 플래그 ESP) | 단축키 없이 **NPC 대화 선택지**로 CHIM 채팅을 연다. 대화 대상이 AI 에이전트가 아니면 **임시 에이전트**로 만들고, 필요 없어지면 해제한다. CHIM이 기본으로 거는 텍스트 채팅 키(숫자패드 0)도 해제한다. |
+| **한국어 MCM** (Dialogue Chat 모드에 포함) | CHIM Lite 2.3.3의 MCM(`AIAgentMCMConfigScript.pex`)을 한국어로 표시한다. |
 | **CHIM Lite Starter** (MO2 플러그인) | MO2에서 스카이림을 실행하면 **chim-lite.exe를 자동 실행**한다. 게임 중에는 **빈 NPC Voice ID를 자동으로 채운다**. 별도 Python 설치가 필요 없다(MO2 내장 Python 사용). |
 
 > **원 제작자 퍼미션**: CHIM Lite 제작자에게 개조 및 업로드 허락을 받았다. 제작자는 이 기능들을 CHIM Lite 본체로 **흡수할 계획**을 밝혔다. 그래서 이 저장소는 흡수 작업에 필요한 동작 원리, 레코드 구성, 검증 결과를 최대한 자세히 적는다. 흡수가 끝나면 이 저장소의 역할도 끝난다.
@@ -36,7 +37,7 @@ WARN chim_lite_server::tts_response: TTS response degraded to text only line_ind
 
 ### 2-1. Dialogue Chat (ESP)
 
-1. `dialogue-chat-mod/` 폴더 전체를 MO2 모드로 설치한다. 파일은 `CHIM Lite - Dialogue Chat.esp`, `SEQ/`, `Scripts/`, `Source/`이다.
+1. `dialogue-chat-mod/` 폴더 전체를 MO2 모드로 설치한다. 파일은 `CHIM Lite - Dialogue Chat.esp`, `SEQ/`, `Scripts/`, `Source/`이다. **MO2 왼쪽 목록에서 CHIM Lite 2.3.3보다 아래(우선순위 높게)**에 둔다. 포함된 한국어 MCM 스크립트가 원본을 덮어써야 하기 때문이다.
 2. 플러그인 순서는 `AIAgent.esp` **뒤**여야 한다(마스터가 `Skyrim.esm`, `AIAgent.esp`).
 3. **새 게임 필요.** 시작 시 활성화되는 퀘스트와 스크립트 속성을 추가하기 때문이다.
 4. 선행 모드는 CHIM Lite 2.3.3과 CHIM Lite가 이미 요구하는 것(SKSE, PapyrusUtil, UIExtensions)뿐이다.
@@ -57,6 +58,14 @@ WARN chim_lite_server::tts_response: TTS response degraded to text only line_ind
 | `chim_lite_exe` | "" | chim-lite.exe 경로. 비어 있으면 실행 중인 chim-lite.exe를 발견하는 순간 자동으로 기억 |
 | `auto_voice` | true | 빈 Voice ID 자동 채우기 |
 | `port` | 8081 | CHIM Lite 서비스 포트 |
+
+### 2-3. 한국어 MCM (CHIM Lite 2.3.3 전용)
+
+- `dialogue-chat-mod/Scripts/AIAgentMCMConfigScript.pex`는 원본 2.3.3 MCM 스크립트에서 **문자열 테이블만** 한국어로 바꾼 것이다. 페이지 이름, 설정 항목, 확인 창, 도움말 등 112개 항목이다.
+- 바이트코드, 문자열 개수, 인덱스, 내부 설정 키, 함수 이름은 원본과 같다. PEX 헤더도 원본 그대로 두어서, 원본 빌드 정보(원본 배포 파일에 이미 들어 있는 값)가 남아 있다.
+- 원본 PSC를 다시 컴파일하지 않은 이유는, SkyUI와 기타 소스 시그니처가 맞지 않아 컴파일이 되지 않았기 때문이다.
+- **CHIM Lite가 업데이트되면 이 파일을 빼야 한다.** 그대로 두면 옛 MCM 스크립트가 새 버전의 MCM을 덮어쓴다. 새 버전용 번역은 아래 도구로 다시 만든다.
+- 도구는 `tools/korean-mcm/patch_pex_strings.py <원본 AIAgentMCMConfigScript.pex> <출력.pex>`이다. 원본 SHA-256이 2.3.3과 다르면 멈추도록 고정되어 있으니, 새 버전에서는 문자열을 검토한 뒤 해시를 갱신한다. 번역 표는 `build_korean_mcm.py`의 `LABELS`와 `patch_pex_strings.py`의 `EXTRA`에 있다. 이 도구로 원본에서 다시 만든 결과가 배포 파일과 바이트 단위로 같음을 확인했다.
 
 ---
 
