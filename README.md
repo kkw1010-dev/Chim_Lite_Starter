@@ -45,7 +45,7 @@ WARN chim_lite_server::tts_response: TTS response degraded to text only line_ind
 
 1. `mo2-plugin/CHIM_Lite_Starter/` 폴더를 **`<MO2 설치 폴더>/plugins/`** 안에 그대로 복사한다. 결과는 `plugins/CHIM_Lite_Starter/__init__.py`가 된다.
 2. MO2를 재시작한다.
-3. MO2 → 설정(Settings) → 플러그인(Plugins) → **CHIM Lite Starter**에서 `chim_lite_exe`에 `chim-lite.exe`의 전체 경로를 입력한다. 비워 두면 서비스를 자동 실행하지 않고, 음성 채우기만 한다(이미 서비스를 켜 둔 경우).
+3. `chim-lite.exe`를 **한 번 직접 실행해 둔 상태**에서 MO2를 켜거나 게임을 실행하면, 플러그인이 실행 중인 프로세스에서 경로를 찾아 `chim_lite_exe` 설정에 **자동으로 저장**한다. 그 다음부터는 서비스를 자동으로 켠다. 직접 입력하려면 MO2 → 설정(Settings) → 플러그인(Plugins) → **CHIM Lite Starter** → `chim_lite_exe`에 전체 경로를 넣는다.
 4. 게임 전에 **SeranaCHANnel에 로그인**한다. API 호출이 30분 동안 없으면 자동 로그아웃되고, 그러면 LLM과 TTS가 모두 `HTTP 404 endpoint_inactive`를 돌려준다.
 5. MO2에서 SKSE(`skse64_loader.exe`) 또는 `SkyrimSE.exe`를 실행한다.
 
@@ -54,7 +54,7 @@ WARN chim_lite_server::tts_response: TTS response degraded to text only line_ind
 | 설정 | 기본값 | 의미 |
 | --- | --- | --- |
 | `enabled` | true | 스카이림 실행 시 동작 |
-| `chim_lite_exe` | "" | chim-lite.exe 경로. 비우면 자동 실행 안 함 |
+| `chim_lite_exe` | "" | chim-lite.exe 경로. 비어 있으면 실행 중인 chim-lite.exe를 발견하는 순간 자동으로 기억 |
 | `auto_voice` | true | 빈 Voice ID 자동 채우기 |
 | `port` | 8081 | CHIM Lite 서비스 포트 |
 

@@ -49,6 +49,10 @@ class Starter(mobase.IPlugin):
         self._data_dir = base / "CHIM_Lite_Starter"
         self._data_dir.mkdir(parents=True, exist_ok=True)
         organizer.onAboutToRun(self._on_about_to_run)
+        try:
+            self._remember_running_exe()
+        except Exception as e:
+            self._log(f"FAIL exe detection {type(e).__name__}: {e}")
         return True
 
     def name(self) -> str:
@@ -67,7 +71,8 @@ class Starter(mobase.IPlugin):
     def settings(self) -> List[mobase.PluginSetting]:
         return [
             mobase.PluginSetting("enabled", "Run CHIM Lite Starter when Skyrim is launched", True),
-            mobase.PluginSetting("chim_lite_exe", "Full path to chim-lite.exe (empty: do not start it)", ""),
+            mobase.PluginSetting("chim_lite_exe", "Full path to chim-lite.exe (empty: remembered automatically "
+                                                  "the first time chim-lite.exe is found running)", ""),
             mobase.PluginSetting("auto_voice", "Fill blank NPC voice IDs automatically", True),
             mobase.PluginSetting("port", "CHIM Lite service port", 8081),
         ]
@@ -112,14 +117,29 @@ class Starter(mobase.IPlugin):
         except OSError:
             return False
 
+    def _remember_running_exe(self):
+        """If chim_lite_exe is empty and chim-lite.exe is running, store its path."""
+        if str(self._setting("chim_lite_exe") or "").strip():
+            return
+        r = subprocess.run(
+            ["powershell.exe", "-NoProfile", "-Command",
+             "(Get-Process chim-lite -ErrorAction SilentlyContinue | Select-Object -First 1).Path"],
+            capture_output=True, text=True, timeout=15, creationflags=subprocess.CREATE_NO_WINDOW)
+        path = r.stdout.strip()
+        if path and Path(path).is_file():
+            self._organizer.setPluginSetting(NAME, "chim_lite_exe", path)
+            self._log(f"remembered running chim-lite.exe: {path}")
+
     def _start_service(self):
+        self._remember_running_exe()
         if self._service_up():
             self._log("service already running")
             return
         exe = Path(str(self._setting("chim_lite_exe") or "").strip().strip('"'))
         if not str(exe) or str(exe) == "." or not exe.is_file():
             self._log(f"service not running and chim_lite_exe is not set to an existing file ({exe}); "
-                      "set it in MO2 > Settings > Plugins > CHIM Lite Starter")
+                      "set it in MO2 > Settings > Plugins > CHIM Lite Starter, or start chim-lite.exe once "
+                      "and it is remembered")
             return
         subprocess.Popen([str(exe)], cwd=str(exe.parent),
                          creationflags=subprocess.CREATE_NO_WINDOW | subprocess.DETACHED_PROCESS,
